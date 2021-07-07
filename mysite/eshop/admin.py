@@ -15,6 +15,7 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('description', 'price')
         }),
     )
+    search_fields = ('name', )
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', )
