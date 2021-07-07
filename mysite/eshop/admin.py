@@ -5,13 +5,13 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'unique_id', 'category', 'sub_category', 'description', 'price')
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = 'name'
+    list_display = ('name', )
 
 class SubCategoryAdmin(admin.ModelAdmin):
     list_display = ('name', 'category')
 
 class OrderProductAdmin(admin.ModelAdmin):
-    list_display = 'product'
+    list_display = ('product', )
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('product', 'date_created')
