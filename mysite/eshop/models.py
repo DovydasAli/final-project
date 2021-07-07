@@ -11,7 +11,7 @@ class Product(models.Model):
     price = models.FloatField('Price', help_text='Price of the product')
 
     def __str__(self):
-        return f"{self.unique_id} {self.name}: {self.category} {self.description} {self.price}"
+        return f"{self.unique_id} {self.name}: {self.category} {self.description} {self.price}€"
 
 class Category(models.Model):
     name = models.CharField('Name', max_length=200)
