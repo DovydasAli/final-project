@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="container product">
+    <h4>{{ product.name }}</h4>
+    <h3>{{ product.category }} - {{ product.sub_category }}</h3>
+    <hr/>
+    <p>{{ product.description }}</p>
+    </hr>
+    </br>
+    <h5>Mes turime šias {{ author.first_name }} {{ author.last_name }} knygas:</h5>
+    {% for i in author.books.all %}
+       <li>{{ i.title }}</li> 
+    {% endfor %}
+    </div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>Products</h1>
+  <p>Our product list.</p>
+  {% for p in products %}
+    <li><a href="{% url 'product' p.id %}">{{p.name}} : ({{p.category}} - {{p.sub_category}}) "{{p.description}}" {{p.price}}€</a></li>
+    {% endfor %}
+{% endblock %}
