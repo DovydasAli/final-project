@@ -54,7 +54,7 @@ class Order(models.Model):
         max_length=12,
         choices=STATUS,
         blank=True,
-        default='draft',
+        default='order placed',
         help_text='Status',
     )
 
