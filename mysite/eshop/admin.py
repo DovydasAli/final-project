@@ -3,12 +3,14 @@ from .models import Product, Category, SubCategory, OrderProduct, Order
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'unique_id', 'category', 'sub_category', 'description', 'price')
+    list_filter = ('category', 'sub_category')
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', )
 
 class SubCategoryAdmin(admin.ModelAdmin):
-    list_display = ('name', 'category')
+    list_display = ('category', 'name')
+    list_filter = ('category', )
 
 class OrderProductAdmin(admin.ModelAdmin):
     list_display = ('product', )
