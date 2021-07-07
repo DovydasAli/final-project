@@ -28,7 +28,7 @@ class OrderProductAdmin(admin.ModelAdmin):
     list_display = ('product', )
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('product', 'date_created')
+    list_display = ('product', 'date_created', 'status')
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)

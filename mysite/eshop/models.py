@@ -44,6 +44,20 @@ class Order(models.Model):
     products = models.ManyToManyField('OrderProduct')
     date_created = models.DateTimeField(auto_now_add=True)
 
+    STATUS = (
+        ('order placed', 'Order placed'),
+        ('in progress', 'In progress'),
+        ('done', 'Done'),
+        ('canceled', 'Canceled'),
+    )
+    status = models.CharField(
+        max_length=12,
+        choices=STATUS,
+        blank=True,
+        default='draft',
+        help_text='Status',
+    )
+
     def get_absolute_url(self):
         return reverse('order-detail', args=[str(self.id)])
 
