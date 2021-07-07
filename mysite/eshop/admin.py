@@ -4,6 +4,17 @@ from .models import Product, Category, SubCategory, OrderProduct, Order
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'unique_id', 'category', 'sub_category', 'description', 'price')
     list_filter = ('category', 'sub_category')
+    fieldsets = (
+        (None, {
+            'fields': ('name', 'unique_id')
+        }),
+        ('Categorisation', {
+            'fields': ('category', 'sub_category')
+        }),
+        ('Product information', {
+            'fields': ('description', 'price')
+        }),
+    )
 
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', )
