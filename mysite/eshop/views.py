@@ -6,6 +6,8 @@ from django.views import generic
 
 from django.core.paginator import Paginator
 
+from django.db.models import Q
+
 def index(request):
     num_products = Product.objects.all().count()
     num_categories = Category.objects.all().count()
@@ -47,3 +49,8 @@ class CategoryDetailView(generic.DetailView):
 
     def get_success_url(self):
         return reverse('category-detail', kwargs={'pk': self.object.id})
+
+def search(request):
+    query = request.GET.get('query')
+    search_results = Product.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
+    return render(request, 'search.html', {'products': search_results, 'query': query})
