@@ -1,8 +1,10 @@
-from django.shortcuts import render
 from django.http import HttpResponse
 
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, reverse
 from .models import Product, Category, SubCategory, OrderProduct, Order
+from django.views import generic
+
+from django.core.paginator import Paginator
 
 def index(request):
     num_products = Product.objects.all().count()
@@ -22,13 +24,26 @@ def index(request):
 
 
 def products(request):
-    products = Product.objects.all()
+    paginator = Paginator(Product.objects.all(), 6)
+    page_number = request.GET.get('page')
+    paged_products = paginator.get_page(page_number)
     context = {
-        'products': products
+        'products': paged_products
     }
-    print(products)
     return render(request, 'products.html', context=context)
 
 def product(request, product_id):
     single_product = get_object_or_404(Product, pk=product_id)
     return render(request, 'product.html', {'product': single_product})
+
+class CategoryListView(generic.ListView):
+    model = Category
+    paginate_by = 6
+    template_name = 'category_list.html'
+
+class CategoryDetailView(generic.DetailView):
+    model = Category
+    template_name = 'category_detail.html'
+
+    def get_success_url(self):
+        return reverse('category-detail', kwargs={'pk': self.object.id})

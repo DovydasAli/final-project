@@ -3,7 +3,45 @@
 {% block content %}
   <h1>Products</h1>
   <p>Our product list.</p>
+    <div class="container d-flex justify-content-center mt-50 mb-50">
+        <div class="row">
   {% for p in products %}
-    <li><a href="{% url 'product' p.id %}">{{p.name}} : ({{p.category}} - {{p.sub_category}}) "{{p.description}}" {{p.price}}€</a></li>
+                 <div class="col-md-4 mt-2"> <!-- cia reikia idet img produkto kai idesiu juos galima butu padaryt dar vertinimo sistema ir wishlista, galima padaryt sita review visa sistema jei ne istrinti  -->
+                    <div class="card">
+                        <div class="card-body">
+                            <!--nuotrauka cia ideti produkto-->
+                            <div class="card-img-actions"> <img src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png" class="card-img img-fluid" height="350" alt=""> </div>
+                        </div>
+                        <div class="card-body bg-light text-center">
+                            <div class="mb-2">
+                                <h6 class="font-weight-semibold mb-2"> <a href="{{ p.id }}" class="text-default mb-2" data-abc="true">{{ p.name }}</a> </h6> <a href="#" class="text-muted" data-abc="true">{{ p.category }} - {{ p.sub_category }}</a>
+                            </div>
+                            <h3 class="mb-0 font-weight-semibold">€{{ p.price }}</h3>
+                            <div> <i class="fa fa-star star"></i> <i class="fa fa-star star"></i> <i class="fa fa-star star"></i> <i class="fa fa-star star"></i> </div>
+                            <div class="text-muted mb-3">number of reviews</div> <button type="button" class="btn bg-cart"><i class="fa fa-cart-plus mr-2"></i> Add to cart</button>
+                        </div>
+                    </div>
+                 </div>
     {% endfor %}
+        </div>
+    </div>
+    <div class="container pages">
+    <nav aria-label="...">
+        {% if products.has_other_pages %}
+            <ul class="pagination pagination-sm justify-content-end">
+                {% for i in products.paginator.page_range %}
+                    {% if products.number == i %}
+                        <li class="page-item active">
+                            <a class="page-link" href="#">{{ i }}</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ i }}">{{ i }}</a>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </nav>
+</div>
 {% endblock %}

@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>{{ category.name }}</h1>
+
+  {% if category.subcategory_set.all %}
+    {% for subcat in category.subcategory_set.all %}
+      <hr>
+      <p>{{ subcat.name }}</p>
+    {% endfor %}
+  {% else %}
+    <p>There are no sub-categories for this category</p>
+  {% endif %}
+
+  </div>
+{% endblock %}
