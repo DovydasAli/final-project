@@ -1,16 +1,21 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block content %}
   <h1>Products</h1>
   <p>Our product list.</p>
     <div class="container d-flex justify-content-center mt-50 mb-50">
         <div class="row">
-  {% for p in products %}
+            {% for p in products %}
                  <div class="col-md-4 mt-2"> <!-- cia reikia idet img produkto kai idesiu juos galima butu padaryt dar vertinimo sistema ir wishlista, galima padaryt sita review visa sistema jei ne istrinti  -->
                     <div class="card">
                         <div class="card-body">
-                            <!--nuotrauka cia ideti produkto-->
-                            <div class="card-img-actions"> <img src="https://res.cloudinary.com/dxfq3iotg/image/upload/v1562074043/234.png" class="card-img img-fluid" height="350" alt=""> </div>
+                            {% if p.picture %}
+                                <div class="card-img-actions"> <img src="{{ p.picture.url }}" class="card-img img-fluid" height="350" alt=""></div>
+                            {% else %}
+                                <div class="card-img-actions"> <img src="{% static 'img/no-image.png' %}" class="card-img img-fluid" height="350" alt=""></div>
+                            {% endif %}
                         </div>
                         <div class="card-body bg-light text-center">
                             <div class="mb-2">
@@ -22,7 +27,7 @@
                         </div>
                     </div>
                  </div>
-    {% endfor %}
+            {% endfor %}
         </div>
     </div>
     <div class="container pages">

@@ -5,11 +5,11 @@
 }
 
 .mt-50 {
-    margin-top: 50px
+    margin-top: 50px;
 }
 
 .mb-50 {
-    margin-bottom: 50px
+    margin-bottom: 50px;
 }
 
 .card {
@@ -23,39 +23,43 @@
     background-color: #fff;
     background-clip: border-box;
     border: 1px solid rgba(0, 0, 0, .125);
-    border-radius: .1875rem
+    border-radius: .1875rem;
 }
 
 .card-img-actions {
-    position: relative
+    position: relative;
 }
 
 .card-body {
     -ms-flex: 1 1 auto;
     flex: 1 1 auto;
     padding: 1.25rem;
-    text-align: center
+    text-align: center;
+}
+
+.card-img {
+    width: 350px;
 }
 
 .star {
-    color: red
+    color: red;
 }
 
 .bg-cart {
     background-color: orange;
-    color: #fff
+    color: #fff;
 }
 
 .bg-cart:hover {
-    color: #fff
+    color: #fff;
 }
 
 .bg-buy {
     background-color: green;
     color: #fff;
-    padding-right: 29px
+    padding-right: 29px;
 }
 
 .bg-buy:hover {
-    color: #fff
+    color: #fff;
 }

@@ -9,6 +9,7 @@ class Product(models.Model):
     sub_category = models.ForeignKey('SubCategory', on_delete=models.SET_NULL, null=True)
     description = models.TextField('Description', max_length=1000, help_text='Short description of the product')
     price = models.FloatField('Price', help_text='Price of the product')
+    picture = models.ImageField('Picture', upload_to='pictures', null=True)
 
     def __str__(self):
         return f"{self.unique_id} {self.name}: {self.category} {self.description} {self.price}€"
