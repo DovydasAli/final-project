@@ -2,11 +2,11 @@ from django.contrib import admin
 from .models import Product, Category, SubCategory, OrderProduct, Order
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'unique_id', 'category', 'sub_category', 'description', 'price', 'discount_price', 'picture')
+    list_display = ('name', 'slug', 'category', 'sub_category', 'description', 'price', 'discount_price', 'picture')
     list_filter = ('category', 'sub_category')
     fieldsets = (
         (None, {
-            'fields': ('name', 'unique_id')
+            'fields': ('name', 'slug')
         }),
         ('Categorisation', {
             'fields': ('category', 'sub_category')
@@ -28,7 +28,7 @@ class SubCategoryAdmin(admin.ModelAdmin):
     list_filter = ('category', )
 
 class OrderProductAdmin(admin.ModelAdmin):
-    list_display = ('product', )
+    list_display = ('product', 'quantity')
 
 class OrderAdmin(admin.ModelAdmin):
     list_display = ('product', 'date_created', 'status')

@@ -19,7 +19,7 @@
                         </div>
                         <div class="card-body bg-light text-center">
                             <div class="mb-2">
-                                <h6 class="font-weight-semibold mb-2"> <a href="{{ p.id }}" class="text-default mb-2" data-abc="true">{{ p.name }}</a> </h6> <a href="#" class="text-muted" data-abc="true">{{ p.category }} - {{ p.sub_category }}</a>
+                                <h6 class="font-weight-semibold mb-2"> <a href="{{ p.get_absolute_url }}" class="text-default mb-2" data-abc="true">{{ p.name }}</a> </h6> <a href="#" class="text-muted" data-abc="true">{{ p.category }} - {{ p.sub_category }}</a>
                             </div>
                             <h3 class="mb-0 font-weight-semibold">€
                                 {% if p.discount_price %}

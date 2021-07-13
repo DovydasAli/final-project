@@ -19,5 +19,6 @@
             <span>€{{ product.price }}</span>
         {% endif %}
     </h5>
+    <a href="{{ product.get_add_to_cart_url }}" class="btn bg-cart">Add to cart</a>
     </div>
 {% endblock %}

@@ -1,6 +1,6 @@
 from django.http import HttpResponse
 
-from django.shortcuts import render, get_object_or_404, reverse
+from django.shortcuts import render, get_object_or_404, reverse, redirect
 from .models import Product, Category, SubCategory, OrderProduct, Order
 from django.views import generic
 
@@ -34,9 +34,9 @@ def products(request):
     }
     return render(request, 'products.html', context=context)
 
-def product(request, product_id):
-    single_product = get_object_or_404(Product, pk=product_id)
-    return render(request, 'product.html', {'product': single_product})
+class ProductDetailView(generic.DetailView):
+    model = Product
+    template_name = 'product.html'
 
 class CategoryListView(generic.ListView):
     model = Category
@@ -54,3 +54,20 @@ def search(request):
     query = request.GET.get('query')
     search_results = Product.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
     return render(request, 'search.html', {'products': search_results, 'query': query})
+
+def add_to_cart(request, slug):
+    product = get_object_or_404(Product, slug=slug)
+    order_product, created = OrderProduct.objects.get_or_create(
+        product=product,
+        user=request.user,
+        ordered=False)
+    order_qs = Order.objects.filter(user=request.user, ordered=False)
+    if order_qs.exists():
+        order = order_qs[0]
+        if order.products.filter(product__slug=product.slug).exists():
+            order_product.quantity += 1
+            order_product.save()
+    else:
+        order = Order.objects.create(user=request.user)
+        order.products.add(order_product)
+    return redirect('eshop:product', slug=slug)
