@@ -21,7 +21,12 @@
                             <div class="mb-2">
                                 <h6 class="font-weight-semibold mb-2"> <a href="{{ p.id }}" class="text-default mb-2" data-abc="true">{{ p.name }}</a> </h6> <a href="#" class="text-muted" data-abc="true">{{ p.category }} - {{ p.sub_category }}</a>
                             </div>
-                            <h3 class="mb-0 font-weight-semibold">€{{ p.price }}</h3>
+                            <h3 class="mb-0 font-weight-semibold">€
+                                {% if p.discount_price %}
+                                {{ p.discount_price }}
+                                {% else %}
+                                {{ p.price }}
+                                {% endif %}</h3>
                             <div> <i class="fa fa-star star"></i> <i class="fa fa-star star"></i> <i class="fa fa-star star"></i> <i class="fa fa-star star"></i> </div>
                             <div class="text-muted mb-3">number of reviews</div> <button type="button" class="btn bg-cart"><i class="fa fa-cart-plus mr-2"></i> Add to cart</button>
                         </div>

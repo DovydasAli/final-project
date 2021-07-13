@@ -9,6 +9,7 @@ class Product(models.Model):
     sub_category = models.ForeignKey('SubCategory', on_delete=models.SET_NULL, null=True)
     description = models.TextField('Description', max_length=1000, help_text='Short description of the product')
     price = models.FloatField('Price', help_text='Price of the product')
+    discount_price = models.FloatField(blank=True, null=True)
     picture = models.ImageField('Picture', upload_to='pictures', null=True)
 
     def __str__(self):
@@ -36,10 +37,10 @@ class SubCategory(models.Model):
         verbose_name_plural = 'Sub categories'
 
 class OrderProduct(models.Model):
-    product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True)
+    product = models.ForeignKey('Product', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.product}"
+        return self.product
 
 class Order(models.Model):
     products = models.ManyToManyField('OrderProduct')

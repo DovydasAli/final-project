@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import Product, Category, SubCategory, OrderProduct, Order
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name', 'unique_id', 'category', 'sub_category', 'description', 'price', 'picture')
+    list_display = ('name', 'unique_id', 'category', 'sub_category', 'description', 'price', 'discount_price', 'picture')
     list_filter = ('category', 'sub_category')
     fieldsets = (
         (None, {
@@ -12,7 +12,7 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('category', 'sub_category')
         }),
         ('Product information', {
-            'fields': ('description', 'price')
+            'fields': ('description', 'price', 'discount_price')
         }),
         ('Picture', {
             'fields': ('picture', )

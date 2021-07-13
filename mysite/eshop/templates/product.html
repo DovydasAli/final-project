@@ -9,6 +9,15 @@
     <p>{{ product.description }}</p>
     </hr>
     </br>
-    <h5><strong>€{{ product.price }}</strong></h5>
+    <h5>
+        {% if product.discount_price %}
+            <span class="mr-1">
+                <del>€{{ product.price }}</del>
+            </span>
+            <span><strong>€{{ product.discount_price }}</strong></span>
+        {% else %}
+            <span>€{{ product.price }}</span>
+        {% endif %}
+    </h5>
     </div>
 {% endblock %}
