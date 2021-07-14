@@ -1,5 +1,6 @@
 from django.contrib import admin
 from .models import Product, Category, SubCategory, OrderProduct, Order
+from django.utils.html import mark_safe
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'category', 'sub_category', 'description', 'price', 'discount_price', 'picture')
@@ -28,13 +29,18 @@ class SubCategoryAdmin(admin.ModelAdmin):
     list_filter = ('category', )
 
 class OrderProductAdmin(admin.ModelAdmin):
-    list_display = ('product', 'quantity')
+    list_display = ('get_name', 'quantity', 'order')
+
+    def get_name(self, obj):
+        return obj.product.name
+    get_name.admin_order_field = 'product'
+    get_name.short_description = 'Product Name'
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('product', 'date_created', 'status')
+    list_display = ('user', 'date_created', 'status')
 
 admin.site.register(Product, ProductAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
-admin.site.register(OrderProduct)
-admin.site.register(Order)
+admin.site.register(OrderProduct, OrderProductAdmin)
+admin.site.register(Order, OrderAdmin)

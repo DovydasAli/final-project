@@ -50,17 +50,16 @@ class SubCategory(models.Model):
         verbose_name_plural = 'Sub categories'
 
 class OrderProduct(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
     ordered = models.BooleanField(default=False)
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
+    order = models.ForeignKey('Order', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
-        return f"{self.product} {self.quantity}"
+        return f"{self.quantity} of {self.product.name}"
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    products = models.ManyToManyField('OrderProduct')
     date_created = models.DateTimeField(auto_now_add=True)
     ordered = models.BooleanField(default=False)
 
@@ -82,4 +81,4 @@ class Order(models.Model):
         return reverse('order-detail', args=[str(self.id)])
 
     def __str__(self):
-        return f"{self.products} {self.date_created}"
+        return f"{self.user} {self.date_created}"

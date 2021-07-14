@@ -28,7 +28,7 @@
                                 {{ p.price }}
                                 {% endif %}</h3>
                             <div> <i class="fa fa-star star"></i> <i class="fa fa-star star"></i> <i class="fa fa-star star"></i> <i class="fa fa-star star"></i> </div>
-                            <div class="text-muted mb-3">number of reviews</div> <button type="button" class="btn bg-cart"><i class="fa fa-cart-plus mr-2"></i> Add to cart</button>
+                            <div class="text-muted mb-3">number of reviews</div> <a href="{{ p.get_add_to_cart_url }}" class="btn bg-cart">Add to cart</a>
                         </div>
                     </div>
                  </div>

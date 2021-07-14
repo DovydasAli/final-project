@@ -8,6 +8,9 @@ from django.core.paginator import Paginator
 
 from django.db.models import Q
 
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 def index(request):
     num_products = Product.objects.all().count()
     num_categories = Category.objects.all().count()
@@ -55,19 +58,24 @@ def search(request):
     search_results = Product.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
     return render(request, 'search.html', {'products': search_results, 'query': query})
 
+@login_required
 def add_to_cart(request, slug):
     product = get_object_or_404(Product, slug=slug)
-    order_product, created = OrderProduct.objects.get_or_create(
-        product=product,
-        user=request.user,
-        ordered=False)
-    order_qs = Order.objects.filter(user=request.user, ordered=False)
-    if order_qs.exists():
-        order = order_qs[0]
-        if order.products.filter(product__slug=product.slug).exists():
-            order_product.quantity += 1
-            order_product.save()
-    else:
-        order = Order.objects.create(user=request.user)
-        order.products.add(order_product)
+    order, created = Order.objects.get_or_create(user=request.user, ordered=False)
+    order_product, created = OrderProduct.objects.get_or_create(product=product, order=order)
+    order_product.quantity += 1
+    order.save()
+    messages.success(request, "Cart updated!")
     return redirect('eshop:product', slug=slug)
+    # order_qs = Order.objects.filter(user=request.user, ordered=False)
+    # if order_qs.exists:
+    #     order = order_qs[0]
+    #     if order.order_products.filter(product__slug=product.slug).exists():
+    #         order_product.quantity += 1
+    #         order_product.save()
+    #     else:
+    #         order.order_products.add(order_product)
+    # else:
+    #     order = Order.objects.create(user=request.user)
+    #     order.order_products.add(order_product)
+    # return redirect('eshop:product', slug=slug)
