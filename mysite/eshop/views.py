@@ -63,19 +63,24 @@ def add_to_cart(request, slug):
     product = get_object_or_404(Product, slug=slug)
     order, created = Order.objects.get_or_create(user=request.user, ordered=False)
     order_product, created = OrderProduct.objects.get_or_create(product=product, order=order)
-    order_product.quantity += 1
-    order.save()
-    messages.success(request, "Cart updated!")
+    if order_product:
+        order_product.quantity += 1
+        order_product.save()
+    messages.success(request, "Cart updated, product added!")
     return redirect('eshop:product', slug=slug)
-    # order_qs = Order.objects.filter(user=request.user, ordered=False)
-    # if order_qs.exists:
-    #     order = order_qs[0]
-    #     if order.order_products.filter(product__slug=product.slug).exists():
-    #         order_product.quantity += 1
-    #         order_product.save()
-    #     else:
-    #         order.order_products.add(order_product)
-    # else:
-    #     order = Order.objects.create(user=request.user)
-    #     order.order_products.add(order_product)
-    # return redirect('eshop:product', slug=slug)
+
+@login_required
+def remove_from_cart(request, slug):
+    product = get_object_or_404(Product, slug=slug)
+    order_qs = OrderProduct.objects.filter(order__user=request.user, ordered=False, order__ordered=False)
+    try:
+        order_product = order_qs.get(product__slug=product.slug)
+        order_product.quantity -= 1
+        order_product.save()
+        if order_product.quantity == 0:
+            order_qs.filter(product__slug=product.slug).delete()
+    except:
+        messages.warning(request, "This product isn't in your cart!")
+        return redirect('eshop:product', slug=slug)
+    messages.success(request, "Cart updated, product removed!")
+    return redirect('eshop:product', slug=slug)

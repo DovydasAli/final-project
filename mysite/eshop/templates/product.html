@@ -1,6 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
+    {% endfor %}
+  {% endif %}
     <div class="container product">
     <h3>{{ product.name }}</h3>
     <h4 class="text-muted">{{ product.category }} - {{ product.sub_category }}</h4>
@@ -20,5 +25,6 @@
         {% endif %}
     </h5>
     <a href="{{ product.get_add_to_cart_url }}" class="btn bg-cart">Add to cart</a>
+    <a href="{{ product.get_remove_from_cart_url }}" class="btn btn-danger">Remove from cart</a>
     </div>
 {% endblock %}

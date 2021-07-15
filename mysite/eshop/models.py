@@ -28,6 +28,11 @@ class Product(models.Model):
             'slug': self.slug
         })
 
+    def get_remove_from_cart_url(self):
+        return reverse('eshop:remove-from-cart', kwargs={
+            'slug': self.slug
+        })
+
 class Category(models.Model):
     name = models.CharField('Name', max_length=200)
 
@@ -52,7 +57,7 @@ class SubCategory(models.Model):
 class OrderProduct(models.Model):
     ordered = models.BooleanField(default=False)
     product = models.ForeignKey('Product', on_delete=models.CASCADE)
-    quantity = models.IntegerField(default=1)
+    quantity = models.IntegerField(default=0)
     order = models.ForeignKey('Order', on_delete=models.CASCADE, null=True)
 
     def __str__(self):
