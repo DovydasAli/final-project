@@ -63,6 +63,21 @@ class OrderProduct(models.Model):
     def __str__(self):
         return f"{self.quantity} of {self.product.name}"
 
+    def get_total_product_price(self):
+        return self.quantity * self.product.price
+
+    def get_total_discount_product_price(self):
+        return self.quantity * self.product.discount_price
+
+    def get_total_savings(self):
+        return self.get_total_product_price() - self.get_total_discount_product_price()
+
+    def get_final_price(self):
+        if self.product.discount_price:
+            return self.get_total_discount_product_price()
+        else:
+            return self.get_total_product_price()
+
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)

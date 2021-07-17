@@ -11,6 +11,9 @@ from django.db.models import Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 
+from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.mixins import LoginRequiredMixin
+
 def index(request):
     num_products = Product.objects.all().count()
     num_categories = Category.objects.all().count()
@@ -36,6 +39,22 @@ def products(request):
         'products': paged_products
     }
     return render(request, 'products.html', context=context)
+
+class OrderSummaryView(LoginRequiredMixin, generic.View):
+    def get(self, *args, **kwargs):
+        try:
+            order = OrderProduct.objects.filter(order__user=self.request.user, ordered=False, order__ordered=False)
+            total = 0
+            for order_item in order:
+                total += order_item.get_final_price()
+            context = {
+                'object': order,
+                'total': format(total, ".2f")  #allows only 2 decimal after dot
+            }
+            return render(self.request, 'order_summary.html', context)
+        except ObjectDoesNotExist:
+            messages.warning(self.request, "You do not have an active order")
+            return redirect("/")
 
 class ProductDetailView(generic.DetailView):
     model = Product
@@ -67,7 +86,7 @@ def add_to_cart(request, slug):
         order_product.quantity += 1
         order_product.save()
     messages.success(request, "Cart updated, product added!")
-    return redirect('eshop:product', slug=slug)
+    return redirect('eshop:order-summary')
 
 @login_required
 def remove_from_cart(request, slug):
@@ -81,6 +100,19 @@ def remove_from_cart(request, slug):
             order_qs.filter(product__slug=product.slug).delete()
     except:
         messages.warning(request, "This product isn't in your cart!")
-        return redirect('eshop:product', slug=slug)
+        return redirect('eshop:order-summary')
     messages.success(request, "Cart updated, product removed!")
-    return redirect('eshop:product', slug=slug)
+    return redirect('eshop:order-summary')
+
+@login_required
+def full_remove_from_cart(request, slug):
+    product = get_object_or_404(Product, slug=slug)
+    order_qs = OrderProduct.objects.filter(order__user=request.user, ordered=False, order__ordered=False)
+    try:
+        order_product = order_qs.get(product__slug=product.slug)
+        order_qs.filter(product__slug=product.slug).delete()
+    except:
+        messages.warning(request, "This product isn't in your cart!")
+        return redirect('eshop:order-summary')
+    messages.success(request, "Cart updated, product removed!")
+    return redirect('eshop:order-summary')
