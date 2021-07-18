@@ -6,7 +6,7 @@ from django.views import generic
 
 from django.core.paginator import Paginator
 
-from django.db.models import Q
+from django.db.models import Q, Min
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -71,6 +71,13 @@ class CategoryDetailView(generic.DetailView):
 
     def get_success_url(self):
         return reverse('category-detail', kwargs={'pk': self.object.id})
+
+    # def get(self, request, *args, **kwargs):
+    #     lowest_price = Product.objects.filter(category__name=).aggregate(Min('price'))
+    #     context = {
+    #         'lowest_price': lowest_price
+    #     }
+    #     return render(self.request, 'category_detail.html', context)
 
 def search(request):
     query = request.GET.get('query')
