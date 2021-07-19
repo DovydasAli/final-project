@@ -49,7 +49,7 @@ class OrderSummaryView(LoginRequiredMixin, generic.View):
                 total += order_item.get_final_price()
             context = {
                 'object': order,
-                'total': format(total, ".2f")  #allows only 2 decimal after dot
+                'total': round(total, 2)  #allows only 2 decimal after dot
             }
             return render(self.request, 'order_summary.html', context)
         except ObjectDoesNotExist:
@@ -65,19 +65,19 @@ class CategoryListView(generic.ListView):
     paginate_by = 6
     template_name = 'category_list.html'
 
-class CategoryDetailView(generic.DetailView):
-    model = Category
-    template_name = 'category_detail.html'
-
-    def get_success_url(self):
-        return reverse('category-detail', kwargs={'pk': self.object.id})
-
     # def get(self, request, *args, **kwargs):
     #     lowest_price = Product.objects.filter(category__name=).aggregate(Min('price'))
     #     context = {
     #         'lowest_price': lowest_price
     #     }
     #     return render(self.request, 'category_detail.html', context)
+
+class CategoryDetailView(generic.DetailView):
+    model = Category
+    template_name = 'category_detail.html'
+
+    def get_success_url(self):
+        return reverse('category-detail', kwargs={'pk': self.object.id})
 
 def search(request):
     query = request.GET.get('query')

@@ -36,7 +36,8 @@
           <a href="{% url 'eshop:full-remove-from-cart' order_item.product.slug %}"><i class="fas fa-times float-right"></i></a>
       </td>
     </tr>
-    {% empty %}
+    {% endfor %}
+    {% if total < 0.01 %}
     <tr>
         <td colspan="6">Your cart is empty</td>
     </tr>
@@ -45,11 +46,10 @@
             <a class="btn btn-primary float-right" href="/">Continue shopping</a>
         </td>
     </tr>
-    {% endfor %}
-    {% if total %}
+    {% else %}
     <tr>
         <td colspan="4"><strong>Order Total</strong></td>
-        <td><strong>€{{ total  }}</strong></td>
+        <td><strong>€{{ total }}</strong></td>
     </tr>
     <tr>
         <td colspan="6">
