@@ -14,7 +14,7 @@
                     </a>
                     <div class="card-body text-center">
                         <h4 class="card-title">{{ category.name }}</h4>
-                        <p class="text-muted">Starting from €{{ lowest_price }}</p><a class="btn btn-outline-primary btn-sm" href="{{ category.id }}" data-abc="true">View Products</a>
+                        <p class="text-muted">Starting from €{{ lowest_prices|get_item:category.name|get_item:"price__min" }}</p><a class="btn btn-outline-primary btn-sm" href="{{ category.id }}" data-abc="true">View Products</a>
                     </div>
                 </div>
             </div>

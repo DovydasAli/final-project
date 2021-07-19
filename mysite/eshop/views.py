@@ -14,6 +14,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.mixins import LoginRequiredMixin
 
+from django.template.defaulttags import register
+
+
 def index(request):
     num_products = Product.objects.all().count()
     num_categories = Category.objects.all().count()
@@ -60,17 +63,27 @@ class ProductDetailView(generic.DetailView):
     model = Product
     template_name = 'product.html'
 
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)
+
 class CategoryListView(generic.ListView):
     model = Category
     paginate_by = 6
     template_name = 'category_list.html'
 
-    # def get(self, request, *args, **kwargs):
-    #     lowest_price = Product.objects.filter(category__name=).aggregate(Min('price'))
-    #     context = {
-    #         'lowest_price': lowest_price
-    #     }
-    #     return render(self.request, 'category_detail.html', context)
+    def get(self, request, *args, **kwargs):
+        lowest_prices = {}
+        category_list = Category.objects.all()
+        for category in category_list:
+            low_prices = Product.objects.filter(category__name=category.name).aggregate(Min('price'))
+            lowest_prices[category.name] = low_prices
+        context = {
+            'lowest_prices': lowest_prices,
+            'category_list': category_list,
+            'get_item': get_item
+        }
+        return render(self.request, 'category_list.html', context)
 
 class CategoryDetailView(generic.DetailView):
     model = Category
