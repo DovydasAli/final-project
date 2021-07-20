@@ -1,10 +1,13 @@
 {% extends "base.html" %}
 
-{% block content %}
-  <h1>{{ category.name }}</h1>
+{% load static %}
 
-  {% if category.subcategory_set.all %}
-    {% for subcat in category.subcategory_set.all %}
+{% block content %}
+<div class="container justify-content-center">
+  <h1>{{ object.name }}</h1>
+
+  {% if object.subcategory_set.all %}
+    {% for subcat in object.subcategory_set.all %}
       <hr>
       <p>{{ subcat.name }}</p>
     {% endfor %}
@@ -12,5 +15,42 @@
     <p>There are no sub-categories for this category</p>
   {% endif %}
 
-  </div>
+<div class="container d-flex justify-content-center mt-50 mb-50">
+    <div class="row">
+        <div class="col-md-10">
+            {% for p in products %}
+            <div class="card card-body">
+                <div class="media align-items-center align-items-lg-start text-center text-lg-left flex-column flex-lg-row">
+                    {% if p.picture %}
+                        <div class="mr-2 mb-3 mb-lg-0"> <img src="{{ p.picture.url }}" width="150" height="150" alt=""> </div>
+                    {% else %}
+                        <div class="card-img-actions"> <img src="{% static 'img/no-image.png' %}" class="card-img img-fluid" height="350" alt=""></div>
+                    {% endif %}
+                    <div class="media-body">
+                        <h6 class="media-title font-weight-semibold"> <a href="{{ p.get_absolute_url }}" data-abc="true">{{ p.name }}</a> </h6>
+                        <ul class="list-inline list-inline-dotted mb-3 mb-lg-2">
+                            <li class="list-inline-item"><a href="#" class="text-muted" data-abc="true">{{ p.category }} - {{ p.sub_category }}</a></li>
+                        </ul>
+                        <p class="mb-3">{{ p.description|truncatechars:255 }}</p>
+                    </div>
+                    <div class="mt-3 mt-lg-0 ml-lg-3 text-center">
+                        <h3 class="mb-0 font-weight-semibold">€
+                                {% if p.discount_price %}
+                                {{ p.discount_price }}
+                                {% else %}
+                                {{ p.price }}
+                                {% endif %}</h3>
+                        <div> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> <i class="fa fa-star"></i> </div>
+                        <div class="text-muted">number of reviews</div>
+                        {% if user.is_authenticated %}
+                            <a href="{{ p.get_add_to_cart_url }}" class="btn bg-cart">Add to cart</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+</div>
 {% endblock %}

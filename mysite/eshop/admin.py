@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category, SubCategory, OrderProduct, Order
+from .models import Product, Category, SubCategory, OrderProduct, Order, ProductReview
 from django.utils.html import mark_safe
 
 class ProductAdmin(admin.ModelAdmin):
@@ -21,6 +21,9 @@ class ProductAdmin(admin.ModelAdmin):
     )
     search_fields = ('name', )
 
+class ProductReviewAdmin(admin.ModelAdmin):
+    list_display = ('product', 'date_created', 'reviewer', 'content', 'rating')
+
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('name', )
 
@@ -40,6 +43,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('user', 'date_created', 'status')
 
 admin.site.register(Product, ProductAdmin)
+admin.site.register(ProductReview, ProductReviewAdmin)
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(SubCategory, SubCategoryAdmin)
 admin.site.register(OrderProduct, OrderProductAdmin)

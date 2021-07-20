@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container justify-content-center">
 
   {% if form.errors %}
     <p>Login error, try again!</p>
@@ -29,5 +30,6 @@
   </form>
   
   <p><a href="{% url 'password_reset' %}">Forgot password?</a></p>
-  
+
+</div>
 {% endblock %}

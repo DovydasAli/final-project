@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+<div class="container justify-content-center">
   <h1>List of our categories</h1>
   {% if category_list %}
     <div class="container mt-100">
@@ -8,13 +9,15 @@
     {% for category in category_list %}
             <div class="col-md-4 col-sm-6">
                 <div class="card mb-30"><a class="card-img-tiles" href="#" data-abc="true">
-                        <div class="inner">
-                           <!--  <div class="main-img"><img src="https://i.imgur.com/O0GMYuw.jpg" alt="Category"></div> Prie kategoriju ir sub kategoriju butu galima prideti nuotraukas -->
-                        </div>
                     </a>
                     <div class="card-body text-center">
                         <h4 class="card-title">{{ category.name }}</h4>
-                        <p class="text-muted">Starting from €{{ lowest_prices|get_item:category.name|get_item:"price__min" }}</p><a class="btn btn-outline-primary btn-sm" href="{{ category.id }}" data-abc="true">View Products</a>
+                        <p class="text-muted">{% if lowest_prices|get_item:category.name != 0 %}
+                            Starting from €{{ lowest_prices|get_item:category.name }}
+                            {% else %}
+                            No products in this category
+                            {% endif %}
+                        </p><a class="btn btn-outline-primary btn-sm" href="{{ category.id }}" data-abc="true">View Products</a>
                     </div>
                 </div>
             </div>
@@ -24,21 +27,5 @@
   {% else %}
     <p>No categories.</p>
   {% endif %}
-    <div class="pagination">
-        <span class="step-links">
-            {% if page_obj.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ page_obj.previous_page_number }}">back</a>
-            {% endif %}
-
-            <span class="current">
-                {{ page_obj.number }} out of {{ page_obj.paginator.num_pages }}
-            </span>
-
-            {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">first</a>
-                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
-            {% endif %}
-        </span>
-    </div>
+</div>
 {% endblock %}

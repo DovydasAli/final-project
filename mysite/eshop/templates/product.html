@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
+{% load static %}
+
 {% block content %}
+<div class="container justify-content-center">
   {% if messages %}
     {% for message in messages %}
       <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
@@ -26,7 +29,46 @@
     </h5>
     {% if user.is_authenticated %}
     <a href="{{ product.get_add_to_cart_url }}" class="btn bg-cart">Add to cart</a>
-    <a href="{{ product.get_remove_from_cart_url }}" class="btn btn-danger">Remove from cart</a>
     {% endif %}
     </div>
+    </br>
+    {{ product.avg_rating }}
+      <h4>Reviews:</h4>
+        {% if user.is_authenticated %}
+          <div class="fieldWrapper">
+            <hr><br/>
+            <h4>Leave a comment:</h4>
+            <form action="" method="post">
+              {% csrf_token %}
+              {{ form.content }}
+              </br>
+               {{ form.rating }}
+              <input type="submit" value="Submit">
+            </form>
+          </div>
+      {% endif %}
+          {% if product.productreview_set.all %}
+            {% for review in product.productreview_set.all %}
+              <hr>
+              <strong>{{ review.reviewer }}</strong>, <em>{{ review.date_created}}</em>
+                <div>
+                    {% if review.rating == 1 %}
+                        <i class="fa fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                    {% elif review.rating == 2 %}
+                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                    {% elif review.rating == 3 %}
+                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
+                    {% elif review.rating == 4 %}
+                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="far fa-star"></i>
+                    {% else %}
+                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
+                    {% endif %}
+                </div>
+              <p>{{ review.content }}</p>
+            {% endfor %}
+          {% else %}
+            <p>This product doesn't have any reviews yet</p>
+          {% endif %}
+</div>
+
 {% endblock %}

@@ -5,6 +5,8 @@ import uuid
 
 from django.contrib.auth.models import User
 
+from django.db.models import Avg
+
 class Product(models.Model):
     name = models.CharField('Name', max_length=200)
     category = models.ForeignKey('Category', on_delete=models.SET_NULL, null=True)
@@ -16,7 +18,7 @@ class Product(models.Model):
     slug = models.SlugField()
 
     def __str__(self):
-        return f"{self.slug} {self.name}: {self.category} {self.description} {self.price}€"
+        return f"{self.name} {self.price}€"
 
     def get_absolute_url(self):
         return reverse('eshop:product', kwargs={
@@ -32,6 +34,30 @@ class Product(models.Model):
         return reverse('eshop:remove-from-cart', kwargs={
             'slug': self.slug
         })
+
+    @property
+    def avg_rating(self):
+        # avg_rating = round(ProductReview.objects.filter(product__slug=self.slug).aggregate(Avg('rating'))['rating__avg'])
+        rating = ProductReview.objects.filter(product=self.pk).aggregate(Avg('rating'))['rating__avg']
+        if rating == None:
+            return None
+        rounded_rating = round(rating)
+        return rounded_rating
+
+class ProductReview(models.Model):
+    product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, blank=True)
+    reviewer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    date_created = models.DateTimeField(auto_now_add=True)
+    Rating_CHOICES = (
+        (1, 'Poor'),
+        (2, 'Average'),
+        (3, 'Good'),
+        (4, 'Very Good'),
+        (5, 'Excellent')
+    )
+
+    rating = models.IntegerField(choices=Rating_CHOICES, default=1)
+    content = models.TextField('Review', max_length=2000)
 
 class Category(models.Model):
     name = models.CharField('Name', max_length=200)

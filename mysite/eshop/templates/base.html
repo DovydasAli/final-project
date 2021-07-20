@@ -16,17 +16,22 @@
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-sm-2">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
       {% block sidebar %}
-        <ul class="sidebar-nav ">
+        <ul class="navbar-nav mr-auto">
           {% if user.is_authenticated %}
-            <li class="nav-item"><a class="nav-link" href="#">
-              <svg class="bi bi-person" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" d="M13 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10zm-9.995-.944v-.002.002zM3.022 13h9.956a.274.274 0 00.014-.002l.008-.002c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664a1.05 1.05 0 00.022.004zm9.974.056v-.002.002zM8 7a2 2 0 100-4 2 2 0 000 4zm3-2a3 3 0 11-6 0 3 3 0 016 0z" clip-rule="evenodd"/>
-              </svg>
-            {{ user.get_username }}</a></li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">
+                <svg class="bi bi-person" width="1.5em" height="1.5em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" d="M13 14s1 0 1-1-1-4-6-4-6 3-6 4 1 1 1 1h10zm-9.995-.944v-.002.002zM3.022 13h9.956a.274.274 0 00.014-.002l.008-.002c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664a1.05 1.05 0 00.022.004zm9.974.056v-.002.002zM8 7a2 2 0 100-4 2 2 0 000 4zm3-2a3 3 0 11-6 0 3 3 0 016 0z" clip-rule="evenodd"/>
+                </svg>
+            {{ user.get_username }}
+              </a>
+            </li>
              <li class="nav-item">
                 <a href="{% url 'eshop:order-summary' %}" class="nav-link waves-effect">
                   <span class="red z-depth-1 text-primary"> {{ request.user|cart_item_count }} </span>
@@ -34,22 +39,23 @@
                   <span class="clearfix d-none d-sm-inline-block"> Cart </span>
                 </a>
              </li>
-            <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}?next=/eshop/accounts/logout">Logout</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'logout' %}">Logout</a></li>
           {% else %}
-            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}?next={{ request.path }}">Login</a></li>
-            <li class="nav-item"><a class="nav-link" href="#">Register</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'login' %}?next=/">Login</a></li>
+            <li class="nav-item"><a class="nav-link" href="{% url 'eshop:register' %}">Register</a></li>
           {% endif %}
-          <li><a class="text-decoration-none" href="{% url 'eshop:index' %}">Home</a></li>
-          <li><a class="text-decoration-none" href="{% url 'eshop:products' %}">All products</a></li>
-          <li><a class="text-decoration-none" href="{% url 'eshop:categories' %}">All categories</a></li>
-          <li>
-            <form action="{% url 'eshop:search' %}" method="get" class="form-inline my-2 my-md-0">
+          <li class="nav-item"><a class="text-decoration-none nav-link" href="{% url 'eshop:index' %}">Home</a></li>
+          <li class="nav-item"><a class="text-decoration-none nav-link" href="{% url 'eshop:products' %}">All products</a></li>
+          <li class="nav-item"><a class="text-decoration-none nav-link" href="{% url 'eshop:categories' %}">All categories</a></li>
+          <li class="nav-item">
+            <form action="{% url 'eshop:search' %}" method="get" class="form-inline my-2 my-lg-0">
             <input name="query" class="form-control" type="text" placeholder="Search">
             </form>
           </li>
         </ul>
      {% endblock %}
       </div>
+    </nav>
       <div class="col-sm-10 p-0">{% block content %}{% endblock %}</div>
     </div>
   </div>
