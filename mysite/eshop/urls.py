@@ -17,4 +17,5 @@ urlpatterns = [
     path('full-remove-from-cart/<slug>/', views.full_remove_from_cart, name='full-remove-from-cart'),
     path('order-summary/', views.OrderSummaryView.as_view(), name='order-summary'),
     path('register/', views.register, name='register'),
+    path('profile/', views.profile, name='profile'),
 ]

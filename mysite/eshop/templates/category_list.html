@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container justify-content-center">
   <h1>List of our categories</h1>
   {% if category_list %}
     <div class="container mt-100">
@@ -27,5 +26,4 @@
   {% else %}
     <p>No categories.</p>
   {% endif %}
-</div>
 {% endblock %}

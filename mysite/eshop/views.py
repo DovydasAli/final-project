@@ -69,6 +69,17 @@ class ProductDetailView(FormMixin, generic.DetailView):
     template_name = 'product.html'
     form_class = ProductReviewForm
 
+    def get(self, request, *args, **kwargs):
+        product = self.get_object()
+        user_review = ProductReview.objects.filter(reviewer=request.user, product=product)  # neveikia jei neprisijunges vartotojas
+        print(user_review)
+        context = {
+            'product': product,
+            'user_review': user_review,
+            'form': ProductReviewForm
+        }
+        return render(self.request, 'product.html', context)
+
     def get_success_url(self):
         return reverse('eshop:product', kwargs={'slug': self.object.slug})
 
@@ -145,6 +156,10 @@ def search(request):
     query = request.GET.get('query')
     search_results = Product.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
     return render(request, 'search.html', {'products': search_results, 'query': query})
+
+@login_required
+def profile(request):
+    return render(request, 'profile.html')
 
 @login_required
 def add_to_cart(request, slug):

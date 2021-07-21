@@ -128,3 +128,10 @@ class Order(models.Model):
 
     def __str__(self):
         return f"{self.user} {self.date_created}"
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    picture = models.ImageField(default="default.png", upload_to="profile_pics")
+
+    def __str__(self):
+        return f"{self.user.username} profile"

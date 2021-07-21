@@ -3,72 +3,100 @@
 {% load static %}
 
 {% block content %}
-<div class="container justify-content-center">
-  {% if messages %}
-    {% for message in messages %}
-      <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
-    {% endfor %}
-  {% endif %}
-    <div class="container product">
-    <h3>{{ product.name }}</h3>
-    <h4 class="text-muted">{{ product.category }} - {{ product.sub_category }}</h4>
-    <img src="{{ product.picture.url }}" class="card-img img-fluid" height="350" alt="">
-    <hr/>
-    <p>{{ product.description }}</p>
-    </hr>
-    </br>
-    <h5>
-        {% if product.discount_price %}
-            <span class="mr-1">
-                <del>€{{ product.price }}</del>
-            </span>
-            <span><strong>€{{ product.discount_price }}</strong></span>
-        {% else %}
-            <span>€{{ product.price }}</span>
-        {% endif %}
-    </h5>
-    {% if user.is_authenticated %}
-    <a href="{{ product.get_add_to_cart_url }}" class="btn bg-cart">Add to cart</a>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags %} alert-{{ message.tags }}{% endif %}">{{ message|safe }}</div>
+        {% endfor %}
     {% endif %}
+    <div class="container product">
+        <h3>{{ product.name }}</h3>
+        <h4 class="text-muted">{{ product.category }} - {{ product.sub_category }}</h4>
+        <img src="{{ product.picture.url }}" class="card-img img-fluid" height="350" alt="">
+        <hr/>
+        <p>{{ product.description }}</p>
+        </hr>
+        </br>
+        <h5>
+            {% if product.discount_price %}
+                <span class="mr-1">
+                        <del>€{{ product.price }}</del>
+                    </span>
+                <span><strong>€{{ product.discount_price }}</strong></span>
+            {% else %}
+                <span>€{{ product.price }}</span>
+            {% endif %}
+        </h5>
+        {% if user.is_authenticated %}
+            <a href="{{ product.get_add_to_cart_url }}" class="btn bg-cart">Add to cart</a>
+        {% endif %}
     </div>
     </br>
-    {{ product.avg_rating }}
-      <h4>Reviews:</h4>
-        {% if user.is_authenticated %}
-          <div class="fieldWrapper">
-            <hr><br/>
-            <h4>Leave a comment:</h4>
-            <form action="" method="post">
-              {% csrf_token %}
-              {{ form.content }}
-              </br>
-               {{ form.rating }}
-              <input type="submit" value="Submit">
-            </form>
-          </div>
-      {% endif %}
-          {% if product.productreview_set.all %}
-            {% for review in product.productreview_set.all %}
-              <hr>
-              <strong>{{ review.reviewer }}</strong>, <em>{{ review.date_created}}</em>
-                <div>
-                    {% if review.rating == 1 %}
-                        <i class="fa fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
-                    {% elif review.rating == 2 %}
-                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
-                    {% elif review.rating == 3 %}
-                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
-                    {% elif review.rating == 4 %}
-                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="far fa-star"></i>
-                    {% else %}
-                        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i>
-                    {% endif %}
-                </div>
-              <p>{{ review.content }}</p>
-            {% endfor %}
-          {% else %}
-            <p>This product doesn't have any reviews yet</p>
-          {% endif %}
-</div>
+    {% if product.avg_rating %}
+        {% if product.avg_rating == 1 %}
+        <i class="fa fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i
+                class="far fa-star"></i>
+        {% elif product.avg_rating == 2 %}
+        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i
+                class="far fa-star"></i>
+        {% elif product.avg_rating == 3 %}
+        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="far fa-star"></i><i
+                class="far fa-star"></i>
+        {% elif product.avg_rating == 4 %}
+        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i
+                class="far fa-star"></i>
+        {% elif product.avg_rating == 5 %}
+        <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i
+                class="fa fa-star"></i>
+        {% endif %}
+    ({{ product.productreview_set.all|length }})
+    {% else %}
+        <i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i
+                class="far fa-star"></i>
+        <p>No ratings</p>
+    {% endif %}
+    {% if user.is_authenticated %}
+        {% if user_review %}
+        {% else %}
+            <div class="fieldWrapper">
+                <hr>
+                <br/>
+                <h4>Leave a comment:</h4>
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ form.content }}
+                    {{ form.rating }}
+                    <input type="submit" value="Submit">
+                </form>
+            </div>
+        {% endif %}
+    {% endif %}
+    <h4>Reviews:</h4>
+    {% if product.productreview_set.all %}
+        {% for review in product.productreview_set.all %}
+            <hr>
+            <strong>{{ review.reviewer }}</strong>, <em>{{ review.date_created}}</em>
+            <div>
+                {% if review.rating == 1 %}
+                <i class="fa fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i
+                    class="far fa-star"></i>
+                {% elif review.rating == 2 %}
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i
+                    class="far fa-star"></i>
+                {% elif review.rating == 3 %}
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="far fa-star"></i><i
+                    class="far fa-star"></i>
+                {% elif review.rating == 4 %}
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i
+                    class="far fa-star"></i>
+                {% else %}
+                <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i
+                    class="fa fa-star"></i>
+                {% endif %}
+            </div>
+            <p>{{ review.content }}</p>
+        {% endfor %}
+    {% else %}
+        <p>This product doesn't have any reviews yet</p>
+    {% endif %}
 
 {% endblock %}
