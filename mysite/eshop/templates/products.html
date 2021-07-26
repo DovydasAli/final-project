@@ -47,7 +47,7 @@
                                 ({{ p.productreview_set.all|length }})
                                 {% else %}
                                     <i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i><i class="far fa-star"></i>
-                                    <p>No ratings</p>
+                                    ({{ p.productreview_set.all|length }})
                                 {% endif %}
                         </div>
                         {% if user.is_authenticated %}

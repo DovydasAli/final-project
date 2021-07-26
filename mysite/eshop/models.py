@@ -7,11 +7,16 @@ from django.contrib.auth.models import User
 
 from django.db.models import Avg
 
+from PIL import Image
+
+from django_countries.fields import CountryField
+
 class Product(models.Model):
     name = models.CharField('Name', max_length=200)
     category = models.ForeignKey('Category', on_delete=models.SET_NULL, null=True)
     sub_category = models.ForeignKey('SubCategory', on_delete=models.SET_NULL, null=True)
-    description = models.TextField('Description', max_length=1000, help_text='Short description of the product')
+    description = models.TextField(
+        'Description', max_length=1000, help_text='Short description of the product')
     price = models.FloatField('Price', help_text='Price of the product')
     discount_price = models.FloatField(blank=True, null=True)
     picture = models.ImageField('Picture', upload_to='pictures', null=True)
@@ -37,7 +42,6 @@ class Product(models.Model):
 
     @property
     def avg_rating(self):
-        # avg_rating = round(ProductReview.objects.filter(product__slug=self.slug).aggregate(Avg('rating'))['rating__avg'])
         rating = ProductReview.objects.filter(product=self.pk).aggregate(Avg('rating'))['rating__avg']
         if rating == None:
             return None
@@ -46,7 +50,7 @@ class Product(models.Model):
 
 class ProductReview(models.Model):
     product = models.ForeignKey('Product', on_delete=models.SET_NULL, null=True, blank=True)
-    reviewer = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    reviewer = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
     date_created = models.DateTimeField(auto_now_add=True)
     Rating_CHOICES = (
         (1, 'Poor'),
@@ -108,6 +112,8 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True)
     ordered = models.BooleanField(default=False)
+    billing_address = models.ForeignKey(
+        'BillingAddress', on_delete=models.SET_NULL, blank=True, null=True)
 
     STATUS = (
         ('order placed', 'Order placed'),
@@ -135,3 +141,25 @@ class Profile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} profile"
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        img = Image.open(self.picture.path)
+        if img.height > 300 or img.width > 300:
+            output_size = (300, 300)
+            img.thumbnail(output_size)
+            img.save(self.picture.path)
+
+class BillingAddress(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    street_address = models.CharField(max_length=100)
+    apartment_address = models.CharField(max_length=100)
+    country = CountryField(multiple=False)
+    zip = models.CharField(max_length=10)
+
+    def __str__(self):
+        return self.user.username
+
+    class Meta:
+        verbose_name = 'Billing address'
+        verbose_name_plural = 'Billing addresses'

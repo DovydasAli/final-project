@@ -32,7 +32,9 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'eshop',
+    'eshop.apps.EshopConfig',
+    'crispy_forms',
+    'django_countries',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -131,3 +133,5 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'eshop/media')
 MEDIA_URL = '/media/'
 
 LOGIN_REDIRECT_URL = '/'
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

@@ -6,18 +6,10 @@
 <div class="container justify-content-center">
   <h1>{{ object.name }}</h1>
 
-  {% if object.subcategory_set.all %}
-    {% for subcat in object.subcategory_set.all %}
-      <hr>
-      <a href="{% url 'eshop:subcategory-detail' subcat.id %}">{{ subcat.name }}</a>
-    {% endfor %}
-  {% else %}
-    <p>There are no sub-categories for this category</p>
-  {% endif %}
-
 <div class="container d-flex justify-content-center mt-50 mb-50">
     <div class="row">
         <div class="col-md-10">
+          {% if products %}
             {% for p in products %}
             <div class="card card-body">
                 <div class="media align-items-center align-items-lg-start text-center text-lg-left flex-column flex-lg-row">
@@ -67,6 +59,11 @@
                 </div>
             </div>
             {% endfor %}
+          {% else %}
+            <div class="container-fluid w-100">
+              <h1>There are no products in this category</h1>
+            </div>
+          {% endif %}
         </div>
     </div>
 </div>

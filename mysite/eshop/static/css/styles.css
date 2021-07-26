@@ -89,3 +89,13 @@ a {
 .bg-buy:hover {
     color: #fff;
 }
+
+.profile-picture {
+    width: 100px;
+}
+
+#sidebar {
+    min-width: 250px;
+    max-width: 250px;
+    min-height: 15vh;
+}

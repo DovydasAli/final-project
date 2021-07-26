@@ -74,6 +74,7 @@
     {% if product.productreview_set.all %}
         {% for review in product.productreview_set.all %}
             <hr>
+            <img class="profile-picture rounded-circle" src="{{ review.reviewer.profile.picture.url }}" />
             <strong>{{ review.reviewer }}</strong>, <em>{{ review.date_created}}</em>
             <div>
                 {% if review.rating == 1 %}

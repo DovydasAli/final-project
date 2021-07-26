@@ -1,7 +1,7 @@
 from django.http import HttpResponse
 
 from django.shortcuts import render, get_object_or_404, reverse, redirect
-from .models import Product, Category, SubCategory, OrderProduct, Order, ProductReview
+from .models import Product, Category, SubCategory, OrderProduct, Order, ProductReview, BillingAddress
 from django.views import generic
 
 from django.core.paginator import Paginator
@@ -18,7 +18,7 @@ from django.template.defaulttags import register
 from django.contrib.auth.forms import User
 from django.views.decorators.csrf import csrf_protect
 
-from .forms import ProductReviewForm
+from .forms import ProductReviewForm, UserUpdateForm, ProfileUpdateForm, CheckoutForm
 from django.views.generic.edit import FormMixin
 
 
@@ -64,6 +64,52 @@ class OrderSummaryView(LoginRequiredMixin, generic.View):
             messages.warning(self.request, "You do not have an active order")
             return redirect("/")
 
+class CheckoutView(generic.View):
+    def get(self, request, *args, **kwargs):
+        form = CheckoutForm()
+        context = {
+            'form': form
+        }
+        return render(self.request, "checkout.html", context)
+
+    def post(self, request, *args, **kwargs):
+        form = CheckoutForm(self.request.POST or None)
+        try:
+            order = Order.objects.get(user=self.request.user, ordered=False)
+            if form.is_valid():
+                street_address = form.cleaned_data.get('street_address')
+                apartment_address = form.cleaned_data.get('apartment_address')
+                country = form.cleaned_data.get('country')
+                zip = form.cleaned_data.get('zip')
+                # same_shipping_address = form.cleaned_data.get('same_shipping_address')
+                # save_info = form.cleaned_data.get('save_info')
+                payment_option = form.cleaned_data.get('payment_option')
+                billing_address = BillingAddress(
+                    user=self.request.user,
+                    street_address=street_address,
+                    apartment_address=apartment_address,
+                    country=country,
+                    zip=zip
+                )
+                try:
+                    billing_address.save()
+                except:
+                    messages.warning(self.request, "Order already placed")
+                    return redirect('eshop:checkout')
+                order.billing_address = billing_address
+                order.save()
+                return redirect('eshop:checkout')
+            messages.warning(self.request, "Failed checkout")
+            return redirect('eshop:checkout')
+        except ObjectDoesNotExist:
+            messages.error(self.request, "You do not have an active order")
+            return redirect("eshop:order-summary")
+
+class PaymentView(generic.View):
+    def get(self, request, *args, **kwargs):
+        return render(self.request, "payment.html")
+
+
 class ProductDetailView(FormMixin, generic.DetailView):
     model = Product
     template_name = 'product.html'
@@ -71,13 +117,18 @@ class ProductDetailView(FormMixin, generic.DetailView):
 
     def get(self, request, *args, **kwargs):
         product = self.get_object()
-        user_review = ProductReview.objects.filter(reviewer=request.user, product=product)  # neveikia jei neprisijunges vartotojas
-        print(user_review)
-        context = {
-            'product': product,
-            'user_review': user_review,
-            'form': ProductReviewForm
-        }
+        if request.user.is_authenticated:
+            user_review = ProductReview.objects.filter(reviewer=request.user, product=product)
+            context = {
+                 'product': product,
+                 'user_review': user_review,
+                 'form': ProductReviewForm
+              }
+        else:
+            context = {
+                'product': product,
+                'form': ProductReviewForm
+            }
         return render(self.request, 'product.html', context)
 
     def get_success_url(self):
@@ -152,6 +203,19 @@ class CategoryDetailView(generic.DetailView):
     def get_success_url(self):
         return reverse('category-detail', kwargs={'pk': self.object.id})
 
+class SubCategoryDetailView(generic.DetailView):
+    model = SubCategory
+    template_name = 'subcategory_detail.html'
+
+    def get(self, request, *args, **kwargs):
+        subcategory = self.get_object()
+        subcategory_products = Product.objects.filter(sub_category__name=subcategory.name)
+        context = {
+            'object': subcategory,
+            'products': subcategory_products
+        }
+        return render(self.request, 'subcategory_detail.html', context)
+
 def search(request):
     query = request.GET.get('query')
     search_results = Product.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
@@ -159,7 +223,23 @@ def search(request):
 
 @login_required
 def profile(request):
-    return render(request, 'profile.html')
+    if request.method == "POST":
+        u_form = UserUpdateForm(request.POST, instance=request.user)
+        p_form = ProfileUpdateForm(request.POST, request.FILES, instance=request.user.profile)
+        if u_form.is_valid() and p_form.is_valid():
+            u_form.save()
+            p_form.save()
+            messages.success(request, f"Profile updated")
+            return redirect('eshop:profile')
+    else:
+        u_form = UserUpdateForm(instance=request.user)
+        p_form = ProfileUpdateForm(instance=request.user.profile)
+
+    context = {
+        'u_form': u_form,
+        'p_form': p_form,
+    }
+    return render(request, 'profile.html', context)
 
 @login_required
 def add_to_cart(request, slug):

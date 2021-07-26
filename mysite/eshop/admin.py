@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Product, Category, SubCategory, OrderProduct, Order, ProductReview, Profile
+from .models import Product, Category, SubCategory, OrderProduct, Order, ProductReview, Profile, BillingAddress
 from django.utils.html import mark_safe
 
 class ProductAdmin(admin.ModelAdmin):
@@ -43,6 +43,7 @@ class OrderAdmin(admin.ModelAdmin):
     list_display = ('user', 'date_created', 'status')
 
 admin.site.register(Profile)
+admin.site.register(BillingAddress)
 admin.site.register(Product, ProductAdmin)
 admin.site.register(ProductReview, ProductReviewAdmin)
 admin.site.register(Category, CategoryAdmin)
