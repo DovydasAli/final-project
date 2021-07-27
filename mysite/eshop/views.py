@@ -233,11 +233,10 @@ def process_payment(request):
     order_products = OrderProduct.objects.filter(order__user=request.user, ordered=False, order__ordered=False)
     host = request.get_host()
 
-
     paypal_dict = {
         'business': settings.PAYPAL_RECEIVER_EMAIL,
         'amount': '%.2f' % order.total_cost(),
-        'invoice': 'This is invoice 64',
+        'invoice': 'This is invoice 74',
         'custom': str(order.id),
         'item_name': "Order {}".format(order.id),
         'address_override': 1,
@@ -254,6 +253,12 @@ def process_payment(request):
         'cancel_return': 'http://{}{}'.format(host,
                                               reverse('eshop:payment-cancelled')),
     }
+
+    for product in order_products:
+        product.ordered = True
+        product.save()
+    order.ordered = True
+    order.save()
 
     form = PayPalPaymentsForm(initial=paypal_dict)
     return render(request, 'process_payment.html', {'order': order, 'form': form})
