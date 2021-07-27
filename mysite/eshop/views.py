@@ -21,6 +21,10 @@ from django.views.decorators.csrf import csrf_protect
 from .forms import ProductReviewForm, UserUpdateForm, ProfileUpdateForm, CheckoutForm
 from django.views.generic.edit import FormMixin
 
+from django.conf import settings
+from paypal.standard.forms import PayPalPaymentsForm
+from django.views.decorators.csrf import csrf_exempt
+
 
 def index(request):
     num_products = Product.objects.all().count()
@@ -53,9 +57,11 @@ class OrderSummaryView(LoginRequiredMixin, generic.View):
         try:
             order = OrderProduct.objects.filter(order__user=self.request.user, ordered=False, order__ordered=False)
             total = 0
+            billing_address = BillingAddress.objects.filter(user=self.request.user)
             for order_item in order:
                 total += order_item.get_final_price()
             context = {
+                'billing_address': billing_address,
                 'object': order,
                 'total': round(total, 2)  #allows only 2 decimal after dot
             }
@@ -64,7 +70,7 @@ class OrderSummaryView(LoginRequiredMixin, generic.View):
             messages.warning(self.request, "You do not have an active order")
             return redirect("/")
 
-class CheckoutView(generic.View):
+class CheckoutView(LoginRequiredMixin, generic.View):
     def get(self, request, *args, **kwargs):
         form = CheckoutForm()
         context = {
@@ -80,16 +86,15 @@ class CheckoutView(generic.View):
                 street_address = form.cleaned_data.get('street_address')
                 apartment_address = form.cleaned_data.get('apartment_address')
                 country = form.cleaned_data.get('country')
+                city = form.cleaned_data.get('city')
                 zip = form.cleaned_data.get('zip')
-                # same_shipping_address = form.cleaned_data.get('same_shipping_address')
-                # save_info = form.cleaned_data.get('save_info')
-                payment_option = form.cleaned_data.get('payment_option')
                 billing_address = BillingAddress(
                     user=self.request.user,
                     street_address=street_address,
                     apartment_address=apartment_address,
                     country=country,
-                    zip=zip
+                    zip=zip,
+                    city=city
                 )
                 try:
                     billing_address.save()
@@ -98,7 +103,7 @@ class CheckoutView(generic.View):
                     return redirect('eshop:checkout')
                 order.billing_address = billing_address
                 order.save()
-                return redirect('eshop:checkout')
+                return redirect('eshop:process-payment')
             messages.warning(self.request, "Failed checkout")
             return redirect('eshop:checkout')
         except ObjectDoesNotExist:
@@ -108,7 +113,6 @@ class CheckoutView(generic.View):
 class PaymentView(generic.View):
     def get(self, request, *args, **kwargs):
         return render(self.request, "payment.html")
-
 
 class ProductDetailView(FormMixin, generic.DetailView):
     model = Product
@@ -222,6 +226,49 @@ def search(request):
     return render(request, 'search.html', {'products': search_results, 'query': query})
 
 @login_required
+def process_payment(request):
+    user_order = Order.objects.get(user=request.user, ordered=False)
+    billing_address = BillingAddress.objects.get(user=request.user)
+    order = get_object_or_404(Order, id=user_order.id)
+    order_products = OrderProduct.objects.filter(order__user=request.user, ordered=False, order__ordered=False)
+    host = request.get_host()
+
+
+    paypal_dict = {
+        'business': settings.PAYPAL_RECEIVER_EMAIL,
+        'amount': '%.2f' % order.total_cost(),
+        'invoice': 'This is invoice 64',
+        'custom': str(order.id),
+        'item_name': "Order {}".format(order.id),
+        'address_override': 1,
+        'currency_code': 'EUR',
+        'address1': str(billing_address.street_address),
+        'address2': str(billing_address.apartment_address),
+        'country': str(billing_address.country),
+        'zip': billing_address.zip,
+        'city': str(billing_address.city),
+        'notify_url': 'http://{}{}'.format(host,
+                                           reverse('paypal-ipn')),
+        'return_url': 'http://{}{}'.format(host,
+                                           reverse('eshop:payment-done')),
+        'cancel_return': 'http://{}{}'.format(host,
+                                              reverse('eshop:payment-cancelled')),
+    }
+
+    form = PayPalPaymentsForm(initial=paypal_dict)
+    return render(request, 'process_payment.html', {'order': order, 'form': form})
+
+@csrf_exempt
+def payment_done(request):
+    return render(request, 'payment_done.html')
+
+
+@csrf_exempt
+def payment_canceled(request):
+    return render(request, 'payment_cancelled.html')
+
+
+@login_required
 def profile(request):
     if request.method == "POST":
         u_form = UserUpdateForm(request.POST, instance=request.user)
@@ -292,6 +339,7 @@ def register(request):
                     return redirect('eshop:register')
                 else:
                     User.objects.create_user(username=username, email=email, password=password)
+                    return redirect('login')
         else:
             messages.error(request, 'Passwords do not match!')
             return redirect('eshop:register')

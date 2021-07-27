@@ -135,6 +135,9 @@ class Order(models.Model):
     def __str__(self):
         return f"{self.user} {self.date_created}"
 
+    def total_cost(self):
+        return sum([product.get_final_price() for product in self.orderproduct_set.all()])
+
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     picture = models.ImageField(default="default.png", upload_to="profile_pics")
@@ -156,6 +159,7 @@ class BillingAddress(models.Model):
     apartment_address = models.CharField(max_length=100)
     country = CountryField(multiple=False)
     zip = models.CharField(max_length=10)
+    city = models.CharField(max_length=100)
 
     def __str__(self):
         return self.user.username

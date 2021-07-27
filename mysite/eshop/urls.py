@@ -20,5 +20,8 @@ urlpatterns = [
     path('register/', views.register, name='register'),
     path('profile/', views.profile, name='profile'),
     path('checkout/', views.CheckoutView.as_view(), name='checkout'),
-    path('payment/<payment_option>/', views.PaymentView.as_view(), name='payment'),
+    path('payment/', views.PaymentView.as_view(), name='payment'),
+    path('process-payment/', views.process_payment, name='process-payment'),
+    path('payment-done/', views.payment_done, name='payment-done'),
+    path('payment-cancelled/', views.payment_canceled, name='payment-cancelled'),
 ]

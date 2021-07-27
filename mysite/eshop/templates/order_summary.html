@@ -54,7 +54,11 @@
     </tr>
     <tr>
         <td colspan="6">
-            <a class="btn btn-warning float-right ml-2" href="{% url 'eshop:checkout' %}">Proceed to checkout</a>
+            {% if not billing_address %}
+                <a class="btn btn-warning float-right ml-2" href="{% url 'eshop:checkout' %}">Proceed to checkout</a>
+            {% else %}
+                <a class="btn btn-warning float-right ml-2" href="{% url 'eshop:process-payment' %}">Proceed to checkout</a>
+            {% endif %}
             <a class="btn btn-primary float-right" href="/">Continue shopping</a>
         </td>
     </tr>

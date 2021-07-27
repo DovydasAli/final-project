@@ -24,6 +24,11 @@
           {{ form.apartment_address }}
         </div>
 
+        <div class="mb-3">
+          <label for="city">City</label>
+          {{ form.city }}
+        </div>
+
         <div class="row">
           <div class="col-md-5 mb-3">
             <label for="country">Country</label>
@@ -34,35 +39,16 @@
           </div>
           <div class="col-md-3 mb-3">
             <label for="zip">Zip</label>
-<!--            <input type="text" class="form-control" id="zip" placeholder="" required>-->
             {{ form.zip }}
             <div class="invalid-feedback">
               Zip code required.
             </div>
           </div>
         </div>
-        <hr>
-        <div class="custom-control custom-checkbox">
-          {{ form.same_shipping_address }}
-          <label for="same-address">Shipping address is the same as my billing address</label>
-        </div>
-        <div class="custom-control custom-checkbox">
-          {{ form.save_info }}
-          <label for="same-address">Save this information for next time </label>
-        </div>
         <hr class="mb-4">
 
         <h4 class="mb-3">Payment</h4>
 
-        <div class="d-block my-3">
-                {% for value, name in form.fields.payment_option.choices %}
-                <div class="custom-control custom-radio">
-                  <input id="{{ name }}" name="payment_option" value="{{ value }}" type="radio" class="custom-control-input" required>
-                  <label class="custom-control-label" for="{{ name }}">{{ name }}</label>
-                </div>
-                {% endfor %}
-              </div>
-        <hr class="mb-4">
         <button class="btn btn-primary btn-lg btn-block" type="submit">Continue to checkout</button>
     </div>
     </form>

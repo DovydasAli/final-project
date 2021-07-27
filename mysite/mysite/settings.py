@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-@4q==3mwm@935_z6%13sdwt@+3z623kk1sc9j9sy4&nmt3!x)*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['1c8ad47d468c.ngrok.io']
 
 
 # Application definition
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'paypal.standard.ipn',
 ]
 
 MIDDLEWARE = [
@@ -135,3 +136,7 @@ MEDIA_URL = '/media/'
 LOGIN_REDIRECT_URL = '/'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+PAYPAL_RECEIVER_EMAIL = 'sb-swh9g6931970@business.example.com'
+
+PAYPAL_TEST = True

@@ -5,4 +5,4 @@ class EshopConfig(AppConfig):
     name = 'eshop'
 
     def ready(self):
-        from .signals import create_profile, save_profile
+        from .signals import create_profile, save_profile, payment_notification
