@@ -236,7 +236,7 @@ def process_payment(request):
     paypal_dict = {
         'business': settings.PAYPAL_RECEIVER_EMAIL,
         'amount': '%.2f' % order.total_cost(),
-        'invoice': 'This is invoice 74',
+        'invoice': 'This is invoice 79',
         'custom': str(order.id),
         'item_name': "Order {}".format(order.id),
         'address_override': 1,
@@ -258,6 +258,7 @@ def process_payment(request):
         product.ordered = True
         product.save()
     order.ordered = True
+    order.status = "in progress"
     order.save()
 
     form = PayPalPaymentsForm(initial=paypal_dict)
